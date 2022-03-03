@@ -1,1 +1,0 @@
-SELECT * FROM bp_data.user;
