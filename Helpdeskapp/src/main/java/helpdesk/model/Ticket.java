@@ -15,11 +15,16 @@ public class Ticket {
     }
     
     public String getCategory() {
+    	
+    	//returns category of the ticket
     	return category;
     }
     
     public void setCategory(String category) {
+    	//sets the category of a ticket
+
     	this.category = category;
+    	
     }
     
     public int getTicketid() {

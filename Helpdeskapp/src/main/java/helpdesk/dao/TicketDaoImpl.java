@@ -25,7 +25,16 @@ public class TicketDaoImpl implements TicketDao{
 	public JdbcTemplate getJdbcTemplate() {
 		return jdbcTemplate;
 	}
-
+	
+	/**ticket creation by user with category selection, title and description
+     * @return - true if ticket created successfully
+     * @param - id of the user
+     * @param - selected category
+     * @param - user input for title
+     * @param - user input for description
+     * 
+     */
+	
 	public int createTicket(int id, String category, String title, String descr) {
 		
 		String query = "insert into tickets (userid, category, title, descr) values (?,?,?,?)";
@@ -34,7 +43,11 @@ public class TicketDaoImpl implements TicketDao{
 		
 		return r;
 	}
-
+	
+	/**get all open tickets with status = open, with specific category and ticket id
+     * @param - category
+     */
+	
 	public List<Ticket> openTickets(String category) {
 		
 		String query = "SELECT t.ticketid, t.userid, t.title , t.descr, f.feedback, s.solution, ts.status from tickets t, ticketfeedback f, ticketsolution s, ticketstatus ts where t.ticketid = f.ticketid and t.ticketid = s.ticketid and t.ticketid = ts.ticketid and ts.status='open' and t.category = ?";
@@ -60,7 +73,9 @@ public class TicketDaoImpl implements TicketDao{
 		return openTickets;
 	}
 	
-	
+	/**get all open tickets with status = open, of a user with user id 
+     * @param - user id
+     */
 
 	public List<Ticket> openTickets(int id) {
 		
@@ -85,7 +100,11 @@ public class TicketDaoImpl implements TicketDao{
 		
 		return openTickets;
 	}
-
+	
+	/**get all closed tickets with status = closed, os a user with user id 
+     * @param - user id
+     */
+	
 	public List<Ticket> closedTickets(int id) {
 		
 		String query = "SELECT t.ticketid, t.title , t.descr, f.feedback, s.solution, ts.status from tickets t, ticketfeedback f, ticketsolution s, ticketstatus ts where t.ticketid = f.ticketid and t.ticketid = s.ticketid and t.ticketid = ts.ticketid and ts.status='closed' and t.userid = ?";
@@ -109,6 +128,10 @@ public class TicketDaoImpl implements TicketDao{
 		
 		return closeTickets;
 	}
+	
+	/**get a ticket with ticket id 
+     * @param - ticket id
+     */
 	
 	public Ticket viewTicket(int id) {
 		
@@ -134,7 +157,11 @@ public class TicketDaoImpl implements TicketDao{
 		
 		return viewTicket;
 	}
-
+	
+	
+	/**get all the open tickets of a user with user id 
+     * @param - user id
+     */
 	public List<Ticket> allTickets(int id) {
 		//SELECT tickets.ticketid, tickets.title, tickets.descr,ticketstatus.status FROM tickets RIGHT JOIN ticketstatus ON tickets.ticketid= ticketstatus.ticketid Where userid =" + id + " and status='Open'
 		String query = "SELECT t.ticketid, t.title , t.descr, f.feedback, s.solution, ts.status from tickets t, ticketfeedback f, ticketsolution s, ticketstatus ts where t.ticketid = f.ticketid and t.ticketid = s.ticketid and t.ticketid = ts.ticketid and ts.status='open' and t.userid = ?";
@@ -161,9 +188,10 @@ public class TicketDaoImpl implements TicketDao{
 		return allTickets;
 		
 	}
-
+	
+	//show all tickets of all users 
 	public List<Ticket> showAllTickets() {
-		String query = "SELECT t.ticketid, t.userid, t.title , t.descr, f.feedback, s.solution, ts.status from tickets t, ticketfeedback f, ticketsolution s, ticketstatus ts where t.ticketid = f.ticketid and t.ticketid = s.ticketid and t.ticketid = ts.ticketid";
+		String query = "SELECT t.ticketid, t.userid, t.title , t.descr, f.feedback, s.solution, ts.status from tickets t, ticketfeedback f, ticketsolution s, ticketstatus ts where t.ticketid = f.ticketid and t.ticketid = s.ticketid and t.ticketid = ts.ticketid and ts.status = 'closed'";
 		
 		List<Ticket> showAllTickets = this.jdbcTemplate.query(query,new RowMapper<Ticket>() {
 			public Ticket mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -184,7 +212,11 @@ public class TicketDaoImpl implements TicketDao{
 		});
 		return showAllTickets;
 	}
-
+	
+	
+	/**get all tickets of a specific category 
+     * @param - selected category
+     */
 	public List<Ticket> byCategory(String category) {
 		//SELECT tickets.ticketid,tickets.userid,tickets.category, tickets.title, tickets.descr,ticketstatus.status FROM tickets RIGHT JOIN ticketstatus ON tickets.ticketid= ticketstatus.ticketid Where category ='" + category + "' and status='Open'
 		
@@ -211,9 +243,11 @@ public class TicketDaoImpl implements TicketDao{
 		
 		return byCategory;
 	}
-
+	
+	
+	// closed tickets with respect to category of the ticket
 	public List<Ticket> closedTickets(int id, String category) {
-		String query = "SELECT t.ticketid, t.title , t.descr, f.feedback, s.solution, ts.status from tickets t, ticketfeedback f, ticketsolution s, ticketstatus ts where t.ticketid = f.ticketid and t.ticketid = s.ticketid and t.ticketid = ts.ticketid and ts.status='closed' and t.userid = ? and t.category=?";
+		String query = "SELECT t.ticketid, t.title , t.descr, f.feedback, s.solution, ts.status from tickets t, ticketfeedback f, ticketsolution s, ticketstatus ts where t.ticketid = f.ticketid and t.ticketid = s.ticketid and t.ticketid = ts.ticketid and ts.status='closed' and t.category=?";
 		
 		List<Ticket> closeTickets = this.jdbcTemplate.query(query,new RowMapper<Ticket>() {
 			public Ticket mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -234,21 +268,33 @@ public class TicketDaoImpl implements TicketDao{
 		
 		return closeTickets;
 	}
-
+	
+	
+	/**set the feedback of a ticket with ticket id by the user 
+     * @param - ticket id, 
+     * @param - user feedback
+     */
 	public void setFeedback(int id, String feedback) {
 		String query = "update ticketfeedback set feedback = ? where ticketid = ?";
 		
 		this.jdbcTemplate.update(query, feedback, id);
 		
 	}
-
+	
+	 /**set the solution of a ticket with ticket id by the IT support 
+     * @param - ticket id, 
+     * @param - user solution
+     */
 	public void setSolution(int id, String solution) {
 		String query = "update ticketsolution set solution = ? where ticketid = ?";
 		
 		this.jdbcTemplate.update(query, solution, id);
 		
 	}
-
+	
+	/**set the status of the ticket to closed 
+     * @param - ticket id
+     */
 	public void closeStatus(int id) {
 		String query = "update ticketstatus set status = 'closed' where ticketid = ? ";
 		

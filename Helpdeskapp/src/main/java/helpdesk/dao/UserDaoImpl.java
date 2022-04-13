@@ -26,6 +26,12 @@ public class UserDaoImpl implements UserDao{
 		this.jdbcTemplate = jdbcTemplate;
 	}
 	
+	
+	/*get the id of the user when the user logins in with his email and password
+     * @returns - true if user id found
+     * @param - get email and password from user input
+     */
+
 	public boolean ifExists(String email, String password) {
 		
 		String query = "select id from user where email=? and password=?";
@@ -39,7 +45,12 @@ public class UserDaoImpl implements UserDao{
 		
 		return exist;
 	}
-
+	
+	
+	/* get the id of the user after login with respect to the email used 
+     * @return - user id
+     * @param - email from user input
+     */
 	public User getId(String email) {
 		
 		String query = "select id from user where email=?";
@@ -59,6 +70,11 @@ public class UserDaoImpl implements UserDao{
 		
 		return user;
 	}
+	
+	/*get the role viz. User, Admin, IT team with respect to the id of the logged in user
+     * @return - role of the user
+     * @param - id of the user
+     */
 
 	public User getRole(int id) {
 		
